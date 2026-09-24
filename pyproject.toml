@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "clinical-calc-mcp"
 version = "0.1.0"
-description = "Local-only FastMCP server for validated, deterministic clinical calculations."
+description = "Validated, local-only clinical calculation tools over MCP, with explicit units and safety notes."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"
@@ -43,6 +43,7 @@ dev = [
   "build>=1.2",
   "pytest>=8.0",
   "ruff>=0.6",
+  "twine>=5.0",
 ]
 
 [project.scripts]
@@ -53,6 +54,7 @@ Homepage = "https://github.com/Umarjaum/clinical-calc-mcp"
 Repository = "https://github.com/Umarjaum/clinical-calc-mcp"
 Issues = "https://github.com/Umarjaum/clinical-calc-mcp/issues"
 Changelog = "https://github.com/Umarjaum/clinical-calc-mcp/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/Umarjaum/clinical-calc-mcp#readme"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/clinical_calc_mcp"]

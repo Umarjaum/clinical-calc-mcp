@@ -1,4 +1,13 @@
+![clinical-calc-mcp project banner](https://raw.githubusercontent.com/Umarjaum/clinical-calc-mcp/main/assets/clinical-calc-banner.png)
+
 # clinical-calc-mcp
+
+[![clinical-calc-mcp logo](https://raw.githubusercontent.com/Umarjaum/clinical-calc-mcp/main/assets/clinical-calc-mark.png)](https://github.com/Umarjaum/clinical-calc-mcp/blob/main/assets/clinical-calc-mark.png)
+
+[![Tests](https://github.com/Umarjaum/clinical-calc-mcp/actions/workflows/test.yml/badge.svg)](https://github.com/Umarjaum/clinical-calc-mcp/actions/workflows/test.yml)
+[![PyPI version](https://img.shields.io/pypi/v/clinical-calc-mcp)](https://pypi.org/project/clinical-calc-mcp/)
+[![Python versions](https://img.shields.io/pypi/pyversions/clinical-calc-mcp)](https://pypi.org/project/clinical-calc-mcp/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 A local-only [FastMCP](https://gofastmcp.com/) server providing validated, deterministic clinical calculation tools for nursing and emergency-care education and authorized clinical software workflows.
 
@@ -26,6 +35,17 @@ Inputs must be finite numbers greater than zero. TBSA must be at most 100%. Drop
 Results are rounded to two decimal places where applicable. Calculated values outside finite floating-point range fail with a clear error. This package does not add arbitrary demographic or body-size limits.
 
 ## Installation
+
+### Install from PyPI
+
+After the first GitHub Trusted Publishing workflow completes successfully, install the latest published release with:
+
+```bash
+python -m pip install clinical-calc-mcp
+clinical-calc-mcp
+```
+
+The package is currently prepared for its first PyPI upload. Until that workflow succeeds, use the GitHub installation below.
 
 ### Install directly from GitHub with pip
 
@@ -84,8 +104,6 @@ uv run clinical-calc-mcp
 ```
 
 `uv sync` installs the locked project dependencies from `uv.lock`. For development extras, use `uv sync --extra dev`.
-
-> **PyPI availability:** The repository is pip-installable from GitHub. A plain `pip install clinical-calc-mcp` is available only after a release has been published to PyPI; GitHub publication does not publish a PyPI distribution automatically.
 
 ## Running the server
 
@@ -158,6 +176,10 @@ uv sync --extra dev
 
 The runtime is deliberately small: FastMCP and Pydantic. Tests use pytest; Ruff supplies optional lint checks. No external service credentials are needed.
 
+## Release and PyPI publishing
+
+Releases are built and validated in GitHub Actions, then published to PyPI with short-lived OpenID Connect credentials using PyPI Trusted Publishing; no PyPI token is stored in GitHub. Before the first upload, configure the PyPI publisher and the GitHub `pypi` environment using the exact values in [docs/releasing.md](docs/releasing.md). To upload version `0.1.0`, manually run the **publish** workflow from `main`. Future version tags (`v0.1.1`, for example) trigger the same release process after the version and changelog are updated. PyPI versions cannot be overwritten.
+
 ## Testing
 
 Run the full suite (including an in-memory MCP client handshake/tool call):
@@ -182,8 +204,15 @@ Tests cover known calculation examples, validation boundaries, NaN/infinity, inv
 clinical-calc-mcp/
 ├── .gitignore
 ├── .python-version
+├── assets/
+│   ├── clinical-calc-banner.png
+│   └── clinical-calc-mark.png
+├── .github/dependabot.yml
+├── .github/workflows/publish.yml
 ├── .github/workflows/test.yml
-├── docs/clinical-safety.md
+├── docs/
+│   ├── clinical-safety.md
+│   └── releasing.md
 ├── src/clinical_calc_mcp/
 │   ├── __init__.py
 │   ├── __main__.py
