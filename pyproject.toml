@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "clinical-calc-mcp"
-version = "0.1.0"
-description = "Validated, local-only clinical calculation tools over MCP, with explicit units and safety notes."
+version = "0.2.0"
+description = "Six validated local MCP tools for common clinical calculations and unit conversions."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"
@@ -15,6 +15,8 @@ keywords = [
   "model-context-protocol",
   "fastmcp",
   "clinical-calculations",
+  "vital-signs",
+  "unit-conversion",
   "healthcare",
   "nursing",
   "medical-education",

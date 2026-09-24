@@ -1,10 +1,12 @@
 # Releasing and publishing to PyPI
 
-Version `0.1.0` is published on [PyPI](https://pypi.org/project/clinical-calc-mcp/). It was uploaded as a wheel and source archive and verified with a clean `pip install`. The GitHub workflow is prepared to publish future releases through **PyPI Trusted Publishing** (OpenID Connect), so no long-lived PyPI token needs to be stored in GitHub.
+Version `0.1.0` is currently published on [PyPI](https://pypi.org/project/clinical-calc-mcp/). It includes the original three calculator tools. Version `0.2.0` adds three further tools, expanded safety and client documentation, and a Docker build; it is not published yet. PyPI releases are immutable, so a version number must never be reused.
 
-## Optional one-time Trusted Publisher setup
+The repository contains a GitHub Actions workflow for **PyPI Trusted Publishing**. Before using it, the PyPI account owner must register the GitHub publisher once and create the matching GitHub environment. No API token is needed in GitHub.
 
-To enable future releases from GitHub Actions, sign in to the PyPI account that owns `clinical-calc-mcp` and open [Manage account → Publishing](https://pypi.org/manage/account/publishing/). Add a publisher with these values:
+## One-time Trusted Publisher setup
+
+Sign in to the PyPI account that owns `clinical-calc-mcp` and open [Manage account → Publishing](https://pypi.org/manage/account/publishing/). Add a publisher with these exact values:
 
 | PyPI field | Value |
 | --- | --- |
@@ -14,11 +16,23 @@ To enable future releases from GitHub Actions, sign in to the PyPI account that 
 | Workflow name | `publish.yml` |
 | Environment name | `pypi` |
 
-In GitHub, open the repository's **Settings → Environments** and create an environment named `pypi`. Optionally add required reviewers as a manual approval gate before each live publish. The environment must match the PyPI publisher configuration. In the workflow, only the publish job receives `id-token: write`; the build-and-test job has no publishing permission.
+Then open the repository's **Settings → Environments** on GitHub and create the environment `pypi`. Required reviewers may be added if the owner wants a manual approval gate before each release. Ensure the publisher environment name and workflow name match exactly. In the workflow, only the publish job receives `id-token: write`; the build/test job does not have publishing permissions.
 
-## Future releases
+## Release 0.2.0
 
-Do **not** manually run the workflow against the current `0.1.0` package version: PyPI versions are immutable and that version is already published. For each future release, update `project.version` in `pyproject.toml` and add the changes to `CHANGELOG.md`. Run the full test and release checks, commit the changes, and push a version tag matching the package version (for example, `v0.1.1`). Once the Trusted Publisher above is configured, pushing a `v*` tag triggers a test/build job followed by a separate PyPI publish job. PyPI will reject an already-used version; do not retry a published version.
+After the `0.2.0` source is merged to `main`, the maintainer should run the release checks below, confirm the PyPI Trusted Publisher and `pypi` environment are configured, and then create and push tag `v0.2.0`. The tag starts the GitHub Actions build, tests, metadata validation, and publish jobs. The published package can then be installed using:
+
+```bash
+python -m pip install --upgrade clinical-calc-mcp
+```
+
+or launched directly by a local MCP client with uv:
+
+```bash
+uvx --from clinical-calc-mcp clinical-calc-mcp
+```
+
+Do not push the tag until the matching publisher has been added to the PyPI account; without it, the OIDC publish job will fail. If a version has already been uploaded, increment the package version before attempting any later release. Do not manually rerun an upload for an already-published version.
 
 ## Local release checks
 
@@ -32,4 +46,8 @@ uv run python -m build
 uv run twine check dist/*
 ```
 
-The workflow does not publish to TestPyPI or create a GitHub release automatically. Create a GitHub release separately when desired.
+The GitHub workflow does not publish to TestPyPI or create a GitHub Release automatically. A maintainer can create a GitHub release separately after verifying the PyPI publication.
+
+## PyPI project
+
+The live package page and download statistics are available at [pypi.org/project/clinical-calc-mcp](https://pypi.org/project/clinical-calc-mcp/).

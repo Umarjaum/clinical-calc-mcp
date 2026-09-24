@@ -7,7 +7,7 @@ dosing, or treatment recommendations and makes no network requests.
 from __future__ import annotations
 
 import math
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from fastmcp import FastMCP
 from fastmcp.exceptions import ToolError
@@ -26,16 +26,22 @@ mcp = FastMCP(
 )
 
 
-def _positive_finite(value: Any, name: str, unit: str) -> float:
-    """Validate a positive, finite numeric value without accepting booleans."""
+def _finite_number(value: Any, name: str, unit: str) -> float:
+    """Validate a finite numeric value without accepting booleans."""
     if isinstance(value, bool) or not isinstance(value, (int, float)):
-        raise ToolError(f"{name} must be a finite number greater than 0 {unit}.")
+        raise ToolError(f"{name} must be a finite number in {unit}.")
     try:
         number = float(value)
     except OverflowError as error:
         raise ToolError(f"{name} is too large for supported finite numeric precision.") from error
     if not math.isfinite(number):
         raise ToolError(f"{name} must be finite; NaN and infinity are not allowed.")
+    return number
+
+
+def _positive_finite(value: Any, name: str, unit: str) -> float:
+    """Validate a positive, finite numeric value without accepting booleans."""
+    number = _finite_number(value, name, unit)
     if number <= 0:
         raise ToolError(f"{name} must be greater than 0 {unit}.")
     return number
@@ -197,6 +203,119 @@ def bsa_mosteller(
             "Mathematical values only; no BMI category, diagnosis, dose, or treatment "
             "recommendation."
         ),
+    }
+
+
+@mcp.tool
+def vital_signs_summary(
+    heart_rate_bpm: Annotated[
+        FiniteFloat,
+        Field(gt=0, description="Heart rate in beats per minute; must be greater than zero."),
+    ],
+    systolic_bp_mmhg: Annotated[
+        FiniteFloat,
+        Field(gt=0, description="Systolic blood pressure in mmHg."),
+    ],
+    diastolic_bp_mmhg: Annotated[
+        FiniteFloat,
+        Field(gt=0, description="Diastolic blood pressure in mmHg, below systolic pressure."),
+    ],
+) -> dict[str, float | str]:
+    """Calculate pulse pressure, estimated MAP, and shock index from supplied vitals.
+
+    This tool returns arithmetic values only. It provides no normal range, category,
+    risk prediction, diagnosis, triage, or treatment recommendation.
+    """
+    heart_rate = _positive_finite(heart_rate_bpm, "heart_rate_bpm", "bpm")
+    systolic = _positive_finite(systolic_bp_mmhg, "systolic_bp_mmhg", "mmHg")
+    diastolic = _positive_finite(diastolic_bp_mmhg, "diastolic_bp_mmhg", "mmHg")
+    if systolic <= diastolic:
+        raise ToolError("systolic_bp_mmhg must be greater than diastolic_bp_mmhg.")
+
+    pulse_pressure = systolic - diastolic
+    estimated_map = diastolic + pulse_pressure / 3.0
+    shock_index = heart_rate / systolic
+    return {
+        "heart_rate_bpm": heart_rate,
+        "systolic_bp_mmhg": systolic,
+        "diastolic_bp_mmhg": diastolic,
+        "pulse_pressure_mmhg": _rounded(pulse_pressure, "pulse pressure"),
+        "estimated_map_mmhg": _rounded(estimated_map, "estimated MAP"),
+        "shock_index": _rounded(shock_index, "shock index"),
+        "formulas": (
+            "pulse pressure = systolic - diastolic; estimated MAP = diastolic + "
+            "(systolic - diastolic)/3; shock index = heart rate/systolic"
+        ),
+        "clinical_notice": (
+            "Arithmetic estimates only, not a measurement or assessment. Estimated MAP and "
+            "shock-index significance depend on context; no thresholds or interpretation are "
+            "provided. Verify units and measurements, and use clinical judgment and applicable "
+            "protocols."
+        ),
+    }
+
+
+@mcp.tool
+def temperature_converter(
+    temperature: Annotated[
+        FiniteFloat,
+        Field(description="Finite temperature value in degrees Celsius or Fahrenheit."),
+    ],
+    from_unit: Annotated[Literal["C", "F"], Field(description="Input unit: C or F.")],
+) -> dict[str, float | str]:
+    """Convert a temperature between Celsius and Fahrenheit without interpretation."""
+    if from_unit not in ("C", "F"):
+        raise ToolError("from_unit must be either 'C' or 'F'.")
+    value = _finite_number(temperature, "temperature", "degrees Celsius or Fahrenheit")
+    if from_unit == "C":
+        if value < -273.15:
+            raise ToolError("temperature is below absolute zero (-273.15 °C).")
+        converted = (value * 9.0 / 5.0) + 32.0
+        to_unit = "F"
+        formula = "°F = (°C × 9/5) + 32"
+    else:
+        if value < -459.67:
+            raise ToolError("temperature is below absolute zero (-459.67 °F).")
+        converted = (value - 32.0) * 5.0 / 9.0
+        to_unit = "C"
+        formula = "°C = (°F - 32) × 5/9"
+    return {
+        "temperature": value,
+        "from_unit": from_unit,
+        "converted_temperature": _rounded(converted, "converted temperature"),
+        "to_unit": to_unit,
+        "formula": formula,
+        "notice": "Unit conversion only; it does not interpret a temperature or provide advice.",
+    }
+
+
+@mcp.tool
+def weight_converter(
+    weight: Annotated[
+        FiniteFloat,
+        Field(gt=0, description="Weight value; must be greater than zero."),
+    ],
+    from_unit: Annotated[Literal["kg", "lb"], Field(description="Input unit: kg or lb.")],
+) -> dict[str, float | str]:
+    """Convert a positive weight between kilograms and pounds."""
+    if from_unit not in ("kg", "lb"):
+        raise ToolError("from_unit must be either 'kg' or 'lb'.")
+    value = _positive_finite(weight, "weight", from_unit)
+    if from_unit == "kg":
+        converted = value * 2.2046226218487757
+        to_unit = "lb"
+        formula = "lb = kg × 2.2046226218487757"
+    else:
+        converted = value / 2.2046226218487757
+        to_unit = "kg"
+        formula = "kg = lb / 2.2046226218487757"
+    return {
+        "weight": value,
+        "from_unit": from_unit,
+        "converted_weight": _rounded(converted, "converted weight"),
+        "to_unit": to_unit,
+        "formula": formula,
+        "notice": "Unit conversion only; it does not interpret weight or provide a dose.",
     }
 
 

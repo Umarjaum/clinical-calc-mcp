@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software in research or teaching, please cite the project repository."
+title: "clinical-calc-mcp"
+abstract: >-
+  Local Model Context Protocol server providing validated deterministic
+  clinical calculations and unit conversions. The software is a calculation
+  utility and does not provide diagnosis or treatment recommendations.
+version: 0.2.0
+license: MIT
+repository-code: "https://github.com/Umarjaum/clinical-calc-mcp"
+url: "https://pypi.org/project/clinical-calc-mcp/"
+keywords:
+  - Model Context Protocol
+  - clinical calculations
+  - unit conversion
+  - Python

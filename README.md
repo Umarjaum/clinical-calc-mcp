@@ -15,7 +15,7 @@ A local-only [FastMCP](https://gofastmcp.com/) server providing validated, deter
 
 ## Features
 
-- Three focused MCP tools with typed inputs, explicit units, validation, and structured results.
+- Six focused MCP tools for common clinical calculations and unit conversions, with typed inputs, explicit units, validation, and structured results.
 - Deterministic arithmetic; no external API, database, patient file access, or network access is needed to calculate.
 - Clear input errors for non-finite, zero, negative, out-of-range, and inappropriate drop-factor values.
 - FastMCP-generated tool schemas; usable with MCP-compatible clients.
@@ -28,9 +28,12 @@ A local-only [FastMCP](https://gofastmcp.com/) server providing validated, deter
 | --- | --- | --- | --- |
 | `parkland_formula` | `weight_kg`, `tbsa_percentage` | Estimated 24-hour volume, first 8-hour and remaining 16-hour volumes and average rates | Classic formula: `4 mL × kg × %TBSA`. The first 8 hours are conventionally measured from burn time, not arrival. Account for fluid already administered. Protocols may differ; this is not an actual fluid-requirement determination. |
 | `bsa_mosteller` | `weight_kg`, `height_cm` | `height_m`, BSA in `m²`, BMI in `kg/m²` | Mosteller: `sqrt((height_cm × weight_kg) / 3600)`. BMI: `weight_kg / height_m²`. No BMI category or diagnosis is given. |
+| `vital_signs_summary` | `heart_rate_bpm`, `systolic_bp_mmhg`, `diastolic_bp_mmhg` | Pulse pressure, estimated MAP, shock index | Returns calculations only. It provides no thresholds, risk category, diagnosis, triage, or treatment recommendation. |
 | `drip_rate_calculator` | `volume_ml`, `time_hours`, optional `drop_factor` (default `15 gtt/mL`) | `mL/hr`, exact `gtt/min` to 2 decimals, whole-drop `gtt/min` | `mL/hr = volume / time`; `gtt/min = (volume × drop factor) / (hours × 60)`. Whole drops use nearest integer, ties rounded up. A rounded rate is not necessarily clinically appropriate. |
+| `temperature_converter` | `temperature`, `from_unit` (`C` or `F`) | Converted temperature | Celsius/Fahrenheit conversion only; temperatures below absolute zero are rejected. No interpretation is provided. |
+| `weight_converter` | `weight`, `from_unit` (`kg` or `lb`) | Converted weight | Kilogram/pound conversion only; non-positive weights are rejected. No dosing or interpretation is provided. |
 
-Inputs must be finite numbers greater than zero. TBSA must be at most 100%. Drop factor must be a positive whole number. Invalid inputs produce understandable tool errors; no calculation tool silently substitutes a value.
+Inputs must be finite, with tool-specific positive-value, unit, and range checks. TBSA cannot exceed 100%; systolic pressure must exceed diastolic pressure; drop factor must be a positive whole number; temperature must be at or above absolute zero. Invalid inputs produce understandable tool errors; no tool silently substitutes a value.
 
 Results are rounded to two decimal places where applicable. Calculated values outside finite floating-point range fail with a clear error. This package does not add arbitrary demographic or body-size limits.
 
@@ -45,7 +48,13 @@ python -m pip install clinical-calc-mcp
 clinical-calc-mcp
 ```
 
-Version `0.1.0` is available at [PyPI](https://pypi.org/project/clinical-calc-mcp/). Trusted Publishing is configured in the repository for future versioned releases.
+PyPI currently serves version `0.1.0`, which includes the original three tools. The six-tool `0.2.0` source is being prepared on GitHub and is not yet on PyPI. Trusted Publishing setup is documented for the next PyPI release.
+
+To let an MCP client launch the current six-tool GitHub version directly without a separate global install, a client with `uvx` support can run this command (requires [uv](https://docs.astral.sh/uv/)):
+
+```bash
+uvx --from git+https://github.com/Umarjaum/clinical-calc-mcp.git clinical-calc-mcp
+```
 
 ### Install directly from GitHub with pip
 
@@ -131,38 +140,53 @@ Keep the process attached to the MCP client; stdio is a protocol transport, not 
 
 ## Claude Desktop integration
 
-Add the following server entry to Claude Desktop's MCP configuration file. The command name works when the package is installed in an environment visible to Claude Desktop:
+To run the current six-tool GitHub version using Claude Desktop, add this server entry to its MCP configuration file:
 
 ```json
 {
   "mcpServers": {
     "clinical-calc-mcp": {
-      "command": "clinical-calc-mcp"
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/Umarjaum/clinical-calc-mcp.git", "clinical-calc-mcp"]
     }
   }
 }
 ```
 
-If Claude Desktop cannot find the command, use the full path to the executable inside the environment where you installed the package. To find it, run `which clinical-calc-mcp` on macOS/Linux or `where clinical-calc-mcp` on Windows. Alternatively, configure the environment's Python executable with arguments `-m clinical_calc_mcp` and set the corresponding working directory if your client supports it.
+This configuration requires [uv](https://docs.astral.sh/uv/) and internet access to fetch the source and dependencies. If you have installed the package in a virtual environment instead, replace the command with the full executable path; find it with `which clinical-calc-mcp` on macOS/Linux or `where.exe clinical-calc-mcp` on Windows.
 
-Configuration-file locations can vary by OS and app version. Use the current MCP / developer settings in Claude Desktop to locate or edit its configuration rather than relying on a hard-coded path. Restart or reload the client after changing configuration, then confirm the three tool names appear.
+Configuration-file locations can vary by OS and app version. Use the current MCP / developer settings in Claude Desktop to locate or edit the configuration file rather than relying on a hard-coded path. Restart or reload the client after changing configuration, then confirm the six tool names appear.
 
-## MCP client configuration
+## Configure other MCP clients
 
-The same stdio command pattern applies to other MCP clients. Example configuration shape:
+Any AI client that supports launching local MCP servers over stdio can use this package. For Claude Desktop and Cursor, use the following configuration shape:
 
 ```json
 {
   "mcpServers": {
     "clinical-calc-mcp": {
-      "command": "clinical-calc-mcp",
-      "args": []
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/Umarjaum/clinical-calc-mcp.git", "clinical-calc-mcp"]
     }
   }
 }
 ```
 
-If installed only inside an isolated virtual environment, point `command` at that environment's `clinical-calc-mcp` executable. The server is local and does not require credentials or a remote endpoint.
+For VS Code, the workspace `.vscode/mcp.json` format uses a top-level `servers` key and an explicit `stdio` type:
+
+```json
+{
+  "servers": {
+    "clinical-calc-mcp": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/Umarjaum/clinical-calc-mcp.git", "clinical-calc-mcp"]
+    }
+  }
+}
+```
+
+For tested steps and troubleshooting, see [docs/client-setup.md](docs/client-setup.md). These instructions cover clients that can run local stdio servers. A hosted or browser-only AI that accepts only remote HTTP MCP servers cannot connect to this local package without a separately hosted, secured service; this project does not expose patient calculations over the internet. Do not assume every AI platform supports MCP or local servers.
 
 ## Development
 
@@ -178,7 +202,7 @@ The runtime is deliberately small: FastMCP and Pydantic. Tests use pytest; Ruff 
 
 ## Release and PyPI publishing
 
-Releases are built and validated in GitHub Actions, then published to PyPI with short-lived OpenID Connect credentials using PyPI Trusted Publishing; no PyPI token is stored in GitHub. Before the first upload, configure the PyPI publisher and the GitHub `pypi` environment using the exact values in [docs/releasing.md](docs/releasing.md). To upload version `0.1.0`, manually run the **publish** workflow from `main`. Future version tags (`v0.1.1`, for example) trigger the same release process after the version and changelog are updated. PyPI versions cannot be overwritten.
+Releases are built and validated in GitHub Actions, then published to PyPI with short-lived OpenID Connect credentials using PyPI Trusted Publishing. The public `0.1.0` release was uploaded directly; configure the publisher and GitHub `pypi` environment in [docs/releasing.md](docs/releasing.md) before using the automated path for a later version. PyPI versions cannot be overwritten.
 
 ## Testing
 
@@ -196,12 +220,13 @@ python -m pytest
 ruff check .
 ```
 
-Tests cover known calculation examples, validation boundaries, NaN/infinity, invalid drop factors, half-up drop rounding, numeric overflow behavior, and exposure of all three MCP tools.
+Tests cover known calculation examples, validation boundaries, NaN/infinity, absolute-zero limits, invalid drop factors, half-up drip rounding, numeric overflow behavior, and protocol exposure of all six MCP tools.
 
 ## Project structure
 
 ```text
 clinical-calc-mcp/
+├── .dockerignore
 ├── .gitignore
 ├── .python-version
 ├── assets/
@@ -211,7 +236,10 @@ clinical-calc-mcp/
 ├── .github/workflows/publish.yml
 ├── .github/workflows/test.yml
 ├── docs/
+│   ├── announcement-draft.md
+│   ├── client-setup.md
 │   ├── clinical-safety.md
+│   ├── discovery.md
 │   └── releasing.md
 ├── src/clinical_calc_mcp/
 │   ├── __init__.py
@@ -220,7 +248,9 @@ clinical-calc-mcp/
 │   └── server.py
 ├── tests/test_server.py
 ├── CHANGELOG.md
+├── CITATION.cff
 ├── CONTRIBUTING.md
+├── Dockerfile
 ├── LICENSE
 ├── pyproject.toml
 ├── SECURITY.md
