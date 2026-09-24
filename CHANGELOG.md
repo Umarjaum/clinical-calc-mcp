@@ -1,0 +1,10 @@
+# Changelog
+
+Notable user-facing changes are recorded here. This project follows semantic versioning after its initial release.
+
+## 0.1.0 — Initial release
+
+- Add FastMCP tools for the classic Parkland formula, Mosteller BSA/BMI, and infusion drip rates.
+- Add finite, positive, and range validation with explicit units and errors.
+- Add deterministic rounding, clinical safety notices, and local-only security model.
+- Add pip/uv packaging, console entrypoint, tests, documentation, and CI.
