@@ -38,14 +38,14 @@ Results are rounded to two decimal places where applicable. Calculated values ou
 
 ### Install from PyPI
 
-After the first GitHub Trusted Publishing workflow completes successfully, install the latest published release with:
+Install the latest published release from PyPI with:
 
 ```bash
 python -m pip install clinical-calc-mcp
 clinical-calc-mcp
 ```
 
-The package is currently prepared for its first PyPI upload. Until that workflow succeeds, use the GitHub installation below.
+Version `0.1.0` is available at [PyPI](https://pypi.org/project/clinical-calc-mcp/). Trusted Publishing is configured in the repository for future versioned releases.
 
 ### Install directly from GitHub with pip
 
