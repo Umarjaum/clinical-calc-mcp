@@ -8,7 +8,7 @@ WORKDIR /app
 COPY pyproject.toml README.md ./
 COPY src/ ./src/
 RUN python -m pip install --no-cache-dir . \
-    && useradd --system --uid 10001 --create-home mcp \
+    && useradd --uid 10001 --user-group --create-home mcp \
     && rm -rf /root/.cache/pip
 
 USER 10001:10001
