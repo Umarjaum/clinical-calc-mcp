@@ -1,0 +1,42 @@
+name: Feature request
+description: Suggest an independently scoped calculation, conversion, or interoperability improvement.
+title: "[Feature]: "
+labels: [enhancement, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        **Do not enter patient names, identifiers, real clinical scenarios, or confidential data.**
+        Please use hypothetical examples. Requests for diagnosis, triage, treatment recommendations,
+        patient-specific decisions, or dose recommendations are outside the intended scope.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or workflow
+      description: Describe the general need without patient-specific or identifiable details.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed calculator or improvement
+      description: For formulas, include authoritative sources, assumptions, units, and rounding.
+    validations:
+      required: true
+  - type: textarea
+    id: examples
+    attributes:
+      label: Synthetic input/output example
+      description: Use entirely made-up values; no personal health information.
+      placeholder: "Synthetic input: ... Expected arithmetic output: ..."
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Safety and privacy confirmation
+      options:
+        - label: I have not included patient data, confidential information, or secrets.
+          required: true
+        - label: I understand that calculations are not clinical recommendations or evidence of clinical suitability.
+          required: true

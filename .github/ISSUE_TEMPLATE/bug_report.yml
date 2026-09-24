@@ -1,0 +1,71 @@
+name: Bug report
+description: Report a reproducible software or calculation defect using synthetic values only.
+title: "[Bug]: "
+labels: [bug, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        **Never enter patient names, dates, identifiers, real clinical narratives, or any protected or confidential data here.**
+        Use made-up/synthetic inputs only. This public issue tracker is not a channel for clinical advice.
+  - type: input
+    id: version
+    attributes:
+      label: Package version or Git commit
+      description: For example, 0.2.0 or a short Git commit hash.
+      placeholder: "0.2.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: python
+    attributes:
+      label: Python version
+      options:
+        - "3.11"
+        - "3.12"
+        - "3.13"
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: operating-system
+    attributes:
+      label: Operating system
+      placeholder: "Ubuntu 24.04, Windows 11, macOS 15"
+    validations:
+      required: true
+  - type: input
+    id: client
+    attributes:
+      label: MCP client, if relevant
+      placeholder: "Claude Desktop version ... / not applicable"
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps using synthetic values
+      description: Include tool name and made-up inputs only. Do not include patient data.
+      placeholder: "Call temperature_converter with synthetic input ..."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and sanitized error
+      description: Remove local paths, usernames, access tokens, and other secrets.
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Safety and privacy confirmation
+      options:
+        - label: I used synthetic values and have not included patient data, confidential information, or secrets.
+          required: true
+        - label: I understand this project does not provide patient-specific medical advice or clinical decision support.
+          required: true

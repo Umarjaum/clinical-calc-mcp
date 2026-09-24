@@ -1,6 +1,6 @@
 # Releasing and publishing to PyPI
 
-Version `0.1.0` is currently published on [PyPI](https://pypi.org/project/clinical-calc-mcp/). It includes the original three calculator tools. Version `0.2.0` adds three further tools, expanded safety and client documentation, and a Docker build; it is not published yet. PyPI releases are immutable, so a version number must never be reused.
+Version `0.1.0` is currently published on [PyPI](https://pypi.org/project/clinical-calc-mcp/). It includes the original three calculator tools. Version `0.2.0` on GitHub `main` adds three further tools, expanded safety and client documentation, and a Docker build; it is not published yet. PyPI releases are immutable, so a version number must never be reused.
 
 The repository contains a GitHub Actions workflow for **PyPI Trusted Publishing**. Before using it, the PyPI account owner must register the GitHub publisher once and create the matching GitHub environment. No API token is needed in GitHub.
 
@@ -20,7 +20,7 @@ Then open the repository's **Settings → Environments** on GitHub and create th
 
 ## Release 0.2.0
 
-After the `0.2.0` source is merged to `main`, the maintainer should run the release checks below, confirm the PyPI Trusted Publisher and `pypi` environment are configured, and then create and push tag `v0.2.0`. The tag starts the GitHub Actions build, tests, metadata validation, and publish jobs. The published package can then be installed using:
+The `0.2.0` source is already on `main`. After confirming the PyPI Trusted Publisher and `pypi` environment are configured and the release checks below pass, the maintainer may create and push tag `v0.2.0`. The tag starts the GitHub Actions build, tests, metadata validation, and publish jobs. The published package can then be installed using:
 
 ```bash
 python -m pip install --upgrade clinical-calc-mcp

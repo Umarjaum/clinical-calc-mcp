@@ -48,7 +48,7 @@ python -m pip install clinical-calc-mcp
 clinical-calc-mcp
 ```
 
-PyPI currently serves version `0.1.0`, which includes the original three tools. The six-tool `0.2.0` source is being prepared on GitHub and is not yet on PyPI. Trusted Publishing setup is documented for the next PyPI release.
+PyPI currently serves version `0.1.0`, which includes the original three tools. The six-tool `0.2.0` source is published on GitHub `main` but is not yet on PyPI. Trusted Publishing setup is documented for the next PyPI release.
 
 To let an MCP client launch the current six-tool GitHub version directly without a separate global install, a client with `uvx` support can run this command (requires [uv](https://docs.astral.sh/uv/)):
 
@@ -188,6 +188,10 @@ For VS Code, the workspace `.vscode/mcp.json` format uses a top-level `servers` 
 
 For tested steps and troubleshooting, see [docs/client-setup.md](docs/client-setup.md). These instructions cover clients that can run local stdio servers. A hosted or browser-only AI that accepts only remote HTTP MCP servers cannot connect to this local package without a separately hosted, secured service; this project does not expose patient calculations over the internet. Do not assume every AI platform supports MCP or local servers.
 
+## Community and project discovery
+
+Read the current [MCP client and catalog compatibility notes](docs/discovery.md). Bug reports and narrow, sourced calculation suggestions are welcome through [GitHub Issues](https://github.com/Umarjaum/clinical-calc-mcp/issues); broader discussion is available in [GitHub Discussions](https://github.com/Umarjaum/clinical-calc-mcp/discussions). Use synthetic examples only—never post patient data, confidential information, or secrets.
+
 ## Development
 
 Requirements: Python 3.11 or newer and Git. Clone the repository, then install its development dependencies:
@@ -233,10 +237,11 @@ clinical-calc-mcp/
 │   ├── clinical-calc-banner.png
 │   └── clinical-calc-mark.png
 ├── .github/dependabot.yml
+├── .github/ISSUE_TEMPLATE/bug_report.yml
+├── .github/ISSUE_TEMPLATE/feature_request.yml
 ├── .github/workflows/publish.yml
 ├── .github/workflows/test.yml
 ├── docs/
-│   ├── announcement-draft.md
 │   ├── client-setup.md
 │   ├── clinical-safety.md
 │   ├── discovery.md
