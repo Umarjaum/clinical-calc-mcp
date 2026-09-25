@@ -9,7 +9,7 @@
 [![Python versions](https://img.shields.io/pypi/pyversions/clinical-calc-mcp)](https://pypi.org/project/clinical-calc-mcp/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-A local-only [FastMCP](https://gofastmcp.com/) server providing validated, deterministic clinical calculation tools for nursing and emergency-care education and authorized clinical software workflows. Visit the [project website](https://clinical-calc-mcp.pages.dev/) for quick start instructions, AI client setup, project resources, and contribution information.
+A local-only [FastMCP](https://gofastmcp.com/) server providing validated, deterministic clinical calculation tools for nursing and emergency-care education and authorized clinical software workflows. Visit the [project website](https://clinical-calc-mcp.pages.dev/) for quick start instructions, AI client setup, project resources, and contribution information. **Developer:** [Muhammad Umar Jabbar](https://umarjaum.netlify.app/). **Website source:** [clinical-calc-mcp-site](https://github.com/Umarjaum/clinical-calc-mcp-site).
 
 > **Clinical safety:** This project is a calculation utility, not a diagnostic or treatment-decision system. It does not determine what is appropriate for any particular patient. Clinical decisions must follow current institutional protocols, clinician judgment, and applicable guidance. Verify every input, unit, and result independently.
 

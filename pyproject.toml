@@ -53,6 +53,7 @@ clinical-calc-mcp = "clinical_calc_mcp.server:main"
 
 [project.urls]
 Homepage = "https://clinical-calc-mcp.pages.dev/"
+Developer = "https://umarjaum.netlify.app/"
 Repository = "https://github.com/Umarjaum/clinical-calc-mcp"
 Issues = "https://github.com/Umarjaum/clinical-calc-mcp/issues"
 Changelog = "https://github.com/Umarjaum/clinical-calc-mcp/blob/main/CHANGELOG.md"
