@@ -52,11 +52,11 @@ dev = [
 clinical-calc-mcp = "clinical_calc_mcp.server:main"
 
 [project.urls]
-Homepage = "https://github.com/Umarjaum/clinical-calc-mcp"
+Homepage = "https://clinical-calc-mcp.pages.dev/"
 Repository = "https://github.com/Umarjaum/clinical-calc-mcp"
 Issues = "https://github.com/Umarjaum/clinical-calc-mcp/issues"
 Changelog = "https://github.com/Umarjaum/clinical-calc-mcp/blob/main/CHANGELOG.md"
-Documentation = "https://github.com/Umarjaum/clinical-calc-mcp#readme"
+Documentation = "https://clinical-calc-mcp.pages.dev/#documentation"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/clinical_calc_mcp"]
